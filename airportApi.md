@@ -3,14 +3,32 @@ HOST: http://www.lan.com
 
 # Latam Airport API
 
-# Group PNR
-## Get Upgrade Itineraries [/ws/api/airport/1/upgrade/pnr/itineraries/carrier/{carrier}/frequent_flyer/{frequent_flyer}]
+# Group Searchs Pnrs
+  Metodos usados para realizar busqueda de pnrs por diferentes criterios
+  Todas las busquedas devuelven por defecto una lista de urls a los diferentes pnrs encontrados
 
+  **Filters**
+    Se puede agregar filtros a la busqueda para traer mas información en la respuesta
+
+  **Ejemplo**        
+    Url con filtro
+    _ws/api/airport/1/pnrs/search?frequent_flier=324234234234&carrier=LA&filters=itineraries,upgradeInfo_
+
+**Filtros**
+1. **itineraries**: Lista de itinerarios
+2. **passengers**: Lista de pasajeros  
+3. **updgradeInfo**: Información para upgrade
+4. **checkinInfo**: Información para checkin
+5. **count**: numero de resultados por pagina 
+
+
+## Search Pnrs By frequent Flyer [/ws/api/airport/1/pnrs/{?frequent_flyer,carrier}]
 + Parameters
-      + frequent_flyer (required, string) ... frequent flyer del cliente
-      + carrier (required, string) ... carrier del frequent flyer
 
-## By frequent Flyer [GET]
+    + frequent_flyer (number) ... ff.
+    + carrier (string) ... carrier.
+
+## By frequent Flyer[GET]
 
 + Request
 
@@ -26,7 +44,171 @@ HOST: http://www.lan.com
              "language":"ES", 
              "country":"CL", 
              "portal":"personas", 
-             "application":"upg"
+             "application":"upg",
+            }
+
++ Response 200
+
+            
+      + Headers
+    
+            Content-Type:application/json
+      + Body
+    
+            {
+              "status": {
+                "code": 200,
+                "message": ""
+              },
+              "data": {
+
+               "pnrs": [
+                  {
+                      "recordLocator": "1111D",
+                      "link" : "/ws/api/airport/1/pnr/1111D"
+                  },
+                  {
+                      "recordLocator": "W222H",
+                      "link" : "/ws/api/airport/1/pnr/W222H"
+                  }
+                ],
+                "paging" : {
+                  "previous" : "/ws/api/airport/1/pnrs/search/{?frequent_flyer,carrier, page=0, count=2}",
+                  "next" : "/ws/api/airport/1/pnrs/search/{?frequent_flyer,carrier, page=1, count=2}"
+                }
+              }
+            }
+
+
+## Search Pnrs By Foid [/ws/api/airport/1/pnrs/search/{?foid_country,foid_code,foid_number}]
++ Parameters
+
+    + foid_number (number) ... foid number.
+    + foid_code (number) ... foid code.
+    + foid_country (string) ... foid country.
+
+## By Foid [GET]
+
++ Request
+
+    + Headers
+    
+            Content-Type : application/json
+            flowId : 119d6ae2-3306-41dc-b5a0-e97d4a0e8b02
+            trackId : 7123132
+
+    + Body
+              
+            {
+             "language":"ES", 
+             "country":"CL", 
+             "portal":"personas", 
+             "application":"upg",
+            }
+
++ Response 200
+
+            
+      + Headers
+    
+            Content-Type:application/json
+      + Body
+    
+            {
+              "status": {
+                "code": 200,
+                "message": ""
+              },
+              "data": {
+
+               "pnrs": [
+                  {
+                      "recordLocator": "1111D",
+                      "link" : "/ws/api/airport/1/pnr/1111D"
+                  },
+                  {
+                      "recordLocator": "W222H",
+                      "link" : "/ws/api/airport/1/pnr/W222H"
+                  }
+                ],
+                "paging" : {
+                  "previous" : "/ws/api/airport/1/pnrs/search/{?frequent_flyer,carrier, page=0, count=2}",
+                  "next" : "/ws/api/airport/1/pnrs/search/{?frequent_flyer,carrier, page=1, count=2}"
+                }
+              }
+            }
+
+## Search Pnrs By E-ticket [/ws/api/airport/1/pnrs/search/{?eticket_number}]
++ Parameters
+
+    + eticket_number (number) ... eticket number.
+
+## By E-Ticket [GET]
+
++ Request
+
+    + Headers
+    
+            Content-Type : application/json
+            flowId : 119d6ae2-3306-41dc-b5a0-e97d4a0e8b02
+            trackId : 7123132
+
+    + Body
+              
+            {
+             "language":"ES", 
+             "country":"CL", 
+             "portal":"personas", 
+             "application":"upg",
+            }
+
++ Response 200
+
+            
+      + Headers
+    
+            Content-Type:application/json
+      + Body
+    
+            {
+              "status": {
+                "code": 200,
+                "message": ""
+              },
+              "data": {
+
+               "pnrs": [
+                  {
+                      "recordLocator": "1111D",
+                      "link" : "/ws/api/airport/1/pnr/1111D"
+                  }
+                ]
+              }
+            }
+
+
+
+# Group PNR
+## Pnr [/ws/api/airport/1/pnr/{record_locator}]
+## get pnr[GET]
+
++ Request
+
+    + Headers
+    
+            Content-Type : application/json
+            flowId : 119d6ae2-3306-41dc-b5a0-e97d4a0e8b02
+            trackId : 7123132
+
+    + Body
+              
+            {
+             "language":"ES", 
+             "country":"CL", 
+             "portal":"personas", 
+             "application":"upg",
+             "frequent_flyer" : "234235324",
+             "carrier" : "JJ"
             }
             
 + Response 200
@@ -151,7 +333,16 @@ HOST: http://www.lan.com
                                                           "passengerId": "3",
                                                           "upgStatus": "POSTULABLE"
                                                       }
-                                                  ]
+                                                  ],
+                                                  passengerCheckinInfo : {
+                                                   "status": "NOTCHECKED",
+                                                    "documentsAllow": {
+                                                        "boardingpasspdf": true,
+                                                        "emailboardingpass": true,
+                                                        "mobileboardingpass": false,
+                                                        "precheckvoucher": true
+                                                    },
+                                                  }
                                               },
                                               {
                                                   "id": "11",
@@ -189,7 +380,16 @@ HOST: http://www.lan.com
                                                           "passengerId": "3",
                                                           "upgStatus": "POSTULABLE"
                                                       }
-                                                  ]
+                                                  ],
+                                                  passengerCheckinInfo : {
+                                                   "status": "NOTCHECKED",
+                                                    "documentsAllow": {
+                                                        "boardingpasspdf": true,
+                                                        "emailboardingpass": true,
+                                                        "mobileboardingpass": false,
+                                                        "precheckvoucher": true
+                                                    },
+                                                  }
                                               }
                                           ]
                                       },
@@ -243,7 +443,16 @@ HOST: http://www.lan.com
                                                           "passengerId": "3",
                                                           "upgStatus": "POSTULABLE"
                                                       }
-                                                  ]
+                                                  ],
+                                                  passengerCheckinInfo : {
+                                                   "status": "NOTCHECKED",
+                                                    "documentsAllow": {
+                                                        "boardingpasspdf": true,
+                                                        "emailboardingpass": true,
+                                                        "mobileboardingpass": false,
+                                                        "precheckvoucher": true
+                                                    },
+                                                  }
                                               }
                                           ]
                                       }
@@ -301,7 +510,16 @@ HOST: http://www.lan.com
                                                           "passengerId": "3",
                                                           "upgStatus": "POSTULABLE"
                                                       }
-                                                  ]
+                                                  ],
+                                                  passengerCheckinInfo : {
+                                                   "status": "NOTCHECKED",
+                                                    "documentsAllow": {
+                                                        "boardingpasspdf": true,
+                                                        "emailboardingpass": true,
+                                                        "mobileboardingpass": false,
+                                                        "precheckvoucher": true
+                                                    },
+                                                  }
                                               }
                                           ],
                                           "messages": [
@@ -410,975 +628,9 @@ HOST: http://www.lan.com
               }
             }
 
-## Get Checkin Itineraries [/ws/api/airport/1.0/checkin/pnr/itineraries]
-### Get  [GET]
 
-Obtiene la información necesaria de pasajeros, segmentos y vuelos desde el gds para realizar el checkin.
-Las posibles formas de request son
-
-```
-1 RecordLocator + LastName
-2 TicketNumber
-3 Foid + Foyd Type + Country Foid + LastName
-```    
-
-**Parametros de entrada**
-
-         
- - **portal** \[_requerido_, _string_\]:  
-      _Portal web de LAN.com opciones: personas, empresas, asociados, trotamundos_ 
-
- - **application**\[_requerido_, _string_\]:  
-     _Aplicacion de LAN.com, ejemplo checkin, compra_normal_
-
- - **country**\[_requerido_, _string_\]:  
-     _Pais del portal de LAN.com que se esta usando, ejemplo CL = Chile_
-
- - **language**\[_requerido_, _string_\]:  
-     _Lenguaje del pais del portal LAN.com que se esta usando, ejemplo ES = Español_
-
- - **channel**\[_requerido_, _string_\]: 
-     _Canal donde se esta realizando el checkin opciones: WEB, MOBILE_
-
- - **recordLocator**\[_opcional_, _string_\]:  
-     _Codigo alfanumerico de 6 letras que indica un identificador de una reserva, ejemplo ASD32D_
-
- - **foid**\[_opcional_, _number_\]:  
-     _"form of identification" numero identificador de un pais, por ejemplo en Chile es el RUT = 145749873_
-
- - **ticketNumber**\[_opcional_, _number_\]:  
-     _Numero identificador de un pasajero en un vuelo en una reserva, ejemplo 04534245452342_
-
- - **lastName**\[_opcional_, _string_\]:  
-     _Apellido del pasajero, ejemplo SIMPSON_
-
- - **gds**\[_opcional_, _number_\]:  
-     _Gds donde realizar la busqueda, 1 = Amadeus, 2 = Sabre_
-
- - **foidType**\[_opcional_, _string_\]:  
-     _Tipo de documento identificador, ejemplo PP = pasaporte_
-
- - **foidCountry**\[_opcional_, _string_\]:  
-     _Pais de emision del documento identificador, ejemplo CL = Chile_ 
-
-
-**PayLoads de Ejemplo**  
-
-  _Busqueda por PNR + LastName_
-```
-        {
-            "portal": "empresas",
-            "application": "checkin",
-            "country": "BR",
-            "language": "PT",
-            "recordLocator" : "ASDE23",
-            "lastName": "SIMPSON",
-            "gds" : 1,
-            "channel" : "WEB",
-        }
-```
- 
-_Busqueda por ticket Number_
-
-```        
-        {
-            "portal": "empresas",
-            "application": "checkin",
-            "country": "BR",
-            "language": "PT",
-            "gds" : 1,
-            "channel" : "WEB",
-            "ticketNumber" : 04534245452342
-        }
-```
-
-_Busqueda por Foid + Foyd Type + Country Foid + LastName_
-
-```        
-        {
-            "portal": "empresas",
-            "application": "checkin",
-            "country": "BR",
-            "language": "PT",
-            "gds" : 1,
-            "channel" : "WEB",
-            "lastName": "SIMPSON",
-            "foidType" : "PP",
-            "foidCountry" : "CL",
-            "foid": 145749876
-        }
-```
-
-
-+ Request (application/json)
-
-    
-        {
-            "portal": "empresas",
-            "application": "checkin",
-            "country": "BR",
-            "language": "PT",
-            "recordLocator" : "ASDE23",
-            "foid" : 145749876,
-            "ticketNumber" : 5442107702235, 
-            "lastName": "SIMPSON",
-            "gds" : 1,
-            "channel" : "WEB",
-            "foidType" : "PP",
-            "foidCountry" : "CL" ,
-        }
-
-    + Headers
-
-            flowId: a4f390e1-af0d-4bcd-8682-fd932d2d8ad
-            trackId: 4264964
-
-        
-+ Response 200 (application/json)
-
-    + Header
-
-            flowId:a4f390e1-af0d-4bcd-8682-fd932d2d8ad
-            trackId:4264964            
-    
-    + Body
-
-            {
-                "status": {
-                    "code": 200
-                },
-                "data": {
-                    "bookings": [
-                        {
-                            "recordLocator": "asdfds",
-                            "segments": [
-                                {
-                                    "id": 1,
-                                    "flights": [
-                                        {
-                                            "id": 1,
-                                            "flightNumber": 23323,
-                                            "operatingAirlineCode": "JJ",
-                                            "marketingAirlineCode": "LA",
-                                            "departureData": {
-                                                "departureCity": {
-                                                    "code": "IGU",
-                                                    "name": "Foz de Iguazu"
-                                                },
-                                                "departureAirport": {
-                                                    "code": "IGU",
-                                                    "name": "Foz de Iguazu"
-                                                },
-                                                "estimatedDepartureDateTime": "2014-05-07T16:07"
-                                            },
-                                            "arrivalData": {
-                                                "arrivalCity": {
-                                                    "code": "SCL",
-                                                    "name": "Santiado de Chile"
-                                                },
-                                                "arrivalAirport": {
-                                                    "code": "SCL",
-                                                    "name": "Santiado de Chile"
-                                                },
-                                                "estimatedArrivalDateTime": "2014-05-07T17:38"
-                                            },
-                                            "connectionWith": 2,
-                                            "status": "OPEN",
-                                            "isStopOver": false,
-                                            "messages": [
-                                                {
-                                                    "text": "Este vuelo esta abierto para checkin"
-                                                }
-                                            ],
-                                            "passengers": [
-                                                {
-                                                    "id": 1,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452342",
-                                                    "status": "NOTCHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                },
-                                                {
-                                                    "id": 2,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452343",
-                                                    "status": "NOTCHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                },
-                                                {
-                                                    "id": 3,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452344",
-                                                    "status": "NOTCHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "id": 2,
-                                            "flightNumber": 23323,
-                                            "operatingAirlineCode": "JJ",
-                                            "marketingAirlineCode": "LA",
-                                            "departureData": {
-                                                "departureCity": {
-                                                    "code": "IGU",
-                                                    "name": "Foz de Iguazu"
-                                                },
-                                                "departureAirport": {
-                                                    "code": "IGU",
-                                                    "name": "Foz de Iguazu"
-                                                },
-                                                "estimatedDepartureDateTime": "2014-05-07T16:07"
-                                            },
-                                            "arrivalData": {
-                                                "arrivalCity": {
-                                                    "code": "SCL",
-                                                    "name": "Santiado de Chile"
-                                                },
-                                                "arrivalAirport": {
-                                                    "code": "SCL",
-                                                    "name": "Santiado de Chile"
-                                                },
-                                                "estimatedArrivalDateTime": "2014-05-07T17:38"
-                                            },
-                                            "connectionWith": 2,
-                                            "status": "OPEN",
-                                            "isStopOver": false,
-                                            "messages": [
-                                                {
-                                                    "text": "Este vuelo esta abierto para checkin"
-                                                }
-                                            ],
-                                            "passengers": [
-                                                {
-                                                    "id": 1,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452342",
-                                                    "status": "CHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                },
-                                                {
-                                                    "id": 2,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452343",
-                                                    "status": "NOTCHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                },
-                                                {
-                                                    "id": 3,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452344",
-                                                    "status": "CHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "id": 3,
-                                            "flightNumber": 23323,
-                                            "operatingAirlineCode": "JJ",
-                                            "marketingAirlineCode": "LA",
-                                            "departureData": {
-                                                "departureCity": {
-                                                    "code": "IGU",
-                                                    "name": "Foz de Iguazu"
-                                                },
-                                                "departureAirport": {
-                                                    "code": "IGU",
-                                                    "name": "Foz de Iguazu"
-                                                },
-                                                "estimatedDepartureDateTime": "2014-05-07T16:07"
-                                            },
-                                            "arrivalData": {
-                                                "arrivalCity": {
-                                                    "code": "SCL",
-                                                    "name": "Santiado de Chile"
-                                                },
-                                                "arrivalAirport": {
-                                                    "code": "SCL",
-                                                    "name": "Santiado de Chile"
-                                                },
-                                                "estimatedArrivalDateTime": "2014-05-07T17:38"
-                                            },
-                                            "connectionWith": 2,
-                                            "status": "OPEN",
-                                            "isStopOver": false,
-                                            "messages": [
-                                                {
-                                                    "text": "Este vuelo esta abierto para checkin"
-                                                }
-                                            ],
-                                            "passengers": [
-                                                {
-                                                    "id": 2,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452343",
-                                                    "status": "NOTCHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                },
-                                                {
-                                                    "id": 3,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452344",
-                                                    "status": "NOTCHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                }
-                                            ]
-                                        }
-                                    ],
-                                    "status": "NOCHECK",
-                                    "messages": [
-                                        {
-                                            "text": "Segmento no chequeble"
-                                        }
-                                    ]
-                                },
-                                {
-                                    "id": 4,
-                                    "flights": [
-                                        {
-                                            "id": 2,
-                                            "flightNumber": 23323,
-                                            "operatingAirlineCode": "JJ",
-                                            "marketingAirlineCode": "LA",
-                                            "departureData": {
-                                                "departureCity": {
-                                                    "code": "IGU",
-                                                    "name": "Foz de Iguazu"
-                                                },
-                                                "departureAirport": {
-                                                    "code": "IGU",
-                                                    "name": "Foz de Iguazu"
-                                                },
-                                                "estimatedDepartureDateTime": "2014-05-07T16:07"
-                                            },
-                                            "arrivalData": {
-                                                "arrivalCity": {
-                                                    "code": "SCL",
-                                                    "name": "Santiado de Chile"
-                                                },
-                                                "arrivalAirport": {
-                                                    "code": "SCL",
-                                                    "name": "Santiado de Chile"
-                                                },
-                                                "estimatedArrivalDateTime": "2014-05-07T17:38"
-                                            },
-                                            "connectionWith": 2,
-                                            "status": "OPEN",
-                                            "isStopOver": false,
-                                            "messages": [
-                                                {
-                                                    "text": "Este vuelo esta abierto para checkin"
-                                                }
-                                            ],
-                                            "passengers": [
-                                                {
-                                                    "id": 1,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452342",
-                                                    "status": "NOTCHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": [ 
-                                                        {
-                                                            "text" : "pasajero imposibilitado de realizar checkin por que es terrorista"
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    "id": 2,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452343",
-                                                    "status": "CHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                },
-                                                {
-                                                    "id": 3,
-                                                    "paxSegmentID" : "1104534245452342",
-                                                    "ticketNumber": "04534245452344",
-                                                    "status": "CHECKED",
-                                                    "documents": {
-                                                        "boardingpasspdf": true,
-                                                        "emailboardingpass": true,
-                                                        "mobileboardingpass": false,
-                                                        "precheckvoucher": true
-                                                    },
-                                                    "messages": []
-                                                }
-                                            ]
-                                        }
-                                    ],
-                                    "status": "CHECK",
-                                    "messages": [
-                                        {
-                                            "text": "Segmento chequeble "
-                                        }
-                                    ]
-                                }
-                            ],
-                            "passengers": [
-                                {
-                                    "id": 2,
-                                    "name": "TUTIN",
-                                    "lastName": "PEREZ",
-                                    "gender": "MALE",
-                                    "frequentFlyerProgram": "JJ",
-                                    "frequentFlyerNumber": 23453254,
-                                    "typeCode": "CHD"
-                                },
-                                {
-                                    "id": 3,
-                                    "name": "TUTITO",
-                                    "lastName": "PEREZ",
-                                    "gender": "MALE",
-                                    "frequentFlyerProgram": "JJ",
-                                    "frequentFlyerNumber": 23453254,
-                                    "typeCode": "INF"
-                                },
-                                {
-                                    "id": 4,
-                                    "name": "TUTITO",
-                                    "lastName": "PEREZ",
-                                    "gender": "MALE",
-                                    "frequentFlyerProgram": "JJ",
-                                    "frequentFlyerNumber": 23453254,
-                                    "typeCode": "INF"
-                                }
-                            ],
-                            "status": "ENABLE",
-                            "messages": [
-                                {
-                                    "text": "Reserva no habilitada para checkin",
-                                    "url": "lan.com/cgi-bin/checkin/paso2.cgi"
-                                }
-                            ],
-                            "gds": 1
-                        }
-                    ]
-                }
-            }
-
-    + Schema
-
-            {
-                "type":"object",
-                "$schema": "http://json-schema.org/draft-03/schema",
-                "id": "http://jsonschema.net",
-                "required":false,
-                "properties":{
-                    "data": {
-                        "type":"object",
-                        "required":false,
-                        "properties":{
-                            "bookings": {
-                                "type":"array",
-                                "required":false,
-                                "description" : "Lista con informacion de reservas que el pasajero tiene disponibles para checkin",
-                                "items":
-                                    {
-                                        "type":"object",
-                                        "required":false,
-                                        "properties":{
-                                            "messages": {
-                                                "type":"array",
-                                                "required":false,
-                                                "description" : "Lista de mensajes asociados a la reserva",
-                                                "items":
-                                                    {
-                                                        "type":"object",
-                                                        "required":false,
-                                                        "properties":{
-                                                            "text": {
-                                                                "type":"string",
-                                                                "required":false,
-                                                                "description" : "Mensaje asociado a una reserva"
-                                                            },
-                                                            "url": {
-                                                                "type":"string",
-                                                                "required":false,
-                                                                "description" : "url a la que debe ser redirigida esta reserva para hacer su checkin"
-                                                            }
-                                                        }
-                                                    }
-                                                
-
-                                            },
-                                            "passengers": {
-                                                "type":"array",
-                                                "required":false,
-                                                "description" : "Datos de los pasajeros que van en esa reserva",
-                                                "items":
-                                                    {
-                                                        "type":"object",
-                                                        "id": "http://jsonschema.net/data/bookings/0/passengers/0",
-                                                        "required":false,
-                                                        "properties":{
-                                                            "frequentFlyerNumber": {
-                                                                "type":"number",
-                                                                "required":false,
-                                                                "description" : "Numero de pasajero frequente del pasajero ejemplo 233242341"
-                                                            },
-                                                            "frequentFlyerProgram": {
-                                                                "type":"string",
-                                                                "required":false,
-                                                                "description" : "Programa de pasajero frequente al cual pertenece el numero anterior, ejemplo LA"
-                                                            },
-                                                            "gender": {
-                                                                "type":"string",
-                                                                "required":false,
-                                                                "description" : "sexo del pasajero, opciones M = masculino, F =  femenino"
-                                                            },
-                                                            "id": {
-                                                                "type":"number",
-                                                                "required":false,
-                                                                "description" : "identificador del pasajero en la reserva, ejemplo 1"
-                                                            },
-                                                            "lastName": {
-                                                                "type":"string",
-                                                                "required":false,
-                                                                "description" : "Apellido del pasajero, ejemplo PEREZ"
-                                                            },
-                                                            "name": {
-                                                                "type":"string",
-                                                                "required":false,
-                                                                "description" : "Nombre del pasajero, ejemplo FUENTES"
-                                                            },
-                                                            "typeCode": {
-                                                                "type":"string",
-                                                                "required":false,
-                                                                "description" : "Tipo de pasajero, opciones ADT = adulto, CHD = child, INF = infante"
-                                                            }
-                                                        }
-                                                    }
-                                                
-
-                                            },
-                                            "recordLocator": {
-                                                "type":"string",
-                                                "required":false,
-                                                "description" : "Codigo de reserva, alfanumerico de 6 caracteres, ejemplo"
-                                            },
-                                            "segments": {
-                                                "type":"array",
-                                                "required":false,
-                                                "items":
-                                                    {
-                                                        "type":"object",
-                                                        "id": "http://jsonschema.net/data/bookings/0/segments/0",
-                                                        "required":false,
-                                                        "properties":{
-                                                            "flights": {
-                                                                "type":"array",
-                                                                "required":false,
-                                                                "description" : "Lista de segmentos de la reserva, deberían venir ordenados por fecha, de menor a mayor",
-                                                                "items":
-                                                                    {
-                                                                        "type":"object",
-                                                                        "id": "http://jsonschema.net/data/bookings/0/segments/0/flights/0",
-                                                                        "required":false,
-                                                                        "properties":{
-                                                                            "arrivalData": {
-                                                                                "type":"object",
-                                                                                "required":false,
-                                                                                "description" : "Entidad con los datos del arribo del vuelo",
-                                                                                "properties":{
-                                                                                    "arrivalAirport": {
-                                                                                        "type":"object",
-                                                                                        "required":false,
-                                                                                        "description" : "Informacion del aeropuerto de arribo",
-                                                                                        "properties":{
-                                                                                            "code": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Codigo de aeropuerto de arribo, ejemplo SCL"
-                                                                                            },
-                                                                                            "name": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Nombre del aeropuerto de arribo, ejemplo Arturo Merino Benitez, Santiago de Chile"
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "arrivalCity": {
-                                                                                        "type":"object",
-                                                                                        "required":false,
-                                                                                        "description" : "Informacion de la ciudad de arribo",
-                                                                                        "properties":{
-                                                                                            "code": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Codigo de la ciudad de arribo, ejemplo BUE"
-                                                                                            },
-                                                                                            "name": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Nombre de la ciudad de arribo, ejemplo Buenos Aires"
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "estimatedArrivalDateTime": {
-                                                                                        "type":"string",
-                                                                                        "required":false,
-                                                                                        "description" : "Fecha y hora estimada del arribo del vuelo, ejemplo 2014-05-07T16:07, formato YYYY-MM-DDThh:mm"
-                                                                                    }
-                                                                                }
-                                                                            },
-                                                                            "connectionWith": {
-                                                                                "type":"number",
-                                                                                "required":false,
-                                                                                "description" : "Este campo indica el id del vuelo con el que esta en conexion este, si esta nulo no es conexion"
-                                                                            },
-                                                                            "departureData": {
-                                                                                "type":"object",
-                                                                                "required":false,
-                                                                                "description" : "Entidad con los datos del despegue del vuelo",
-                                                                                "properties":{
-                                                                                    "departureAirport": {
-                                                                                        "type":"object",
-                                                                                        "required":false,
-                                                                                        "description" : "Informacion del aeropuerto de despegue",
-                                                                                        "properties":{
-                                                                                            "code": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Codigo de aeropuerto de despegue, ejemplo SCL"
-                                                                                            },
-                                                                                            "name": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Nombre del aeropuerto de despegue, ejemplo Arturo Merino Benitez, Santiago de Chile"
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "departureCity": {
-                                                                                        "type":"object",
-                                                                                        "required":false,
-                                                                                        "description" : "Informacion de la ciudad de despegue",
-                                                                                        "properties":{
-                                                                                            "code": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Codigo de la ciudad de despegue, ejemplo BUE"
-                                                                                            },
-                                                                                            "name": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Nombre de la ciudad de despegue, ejemplo Buenos Aires"
-                                                                                            }
-                                                                                        }
-                                                                                    },
-                                                                                    "estimatedDepartureDateTime": {
-                                                                                        "type":"string",
-                                                                                        "required":false,
-                                                                                        "description" : "Fecha y hora estimada del despegue del vuelo, ejemplo 2014-05-07T16:07, formato YYYY-MM-DDThh:mm"
-                                                                                    }
-                                                                                }
-                                                                            },
-                                                                            "flightNumber": {
-                                                                                "type":"number",
-                                                                                "required":false,
-                                                                                "description" : "Numero de vuelo, ejemplo 2343"
-                                                                            },
-                                                                            "id": {
-                                                                                "type":"number",
-                                                                                "required":false,
-                                                                                "description": "Identificador del vuelo en la reserva, ejemplo 1"
-                                                                            },
-                                                                            "isStopOver": {
-                                                                                "type":"boolean",
-                                                                                "required":false,
-                                                                                "description" : "Indica si este vuelo es escala del segmento al que pertenece"
-                                                                            },
-                                                                            "marketingAirlineCode": {
-                                                                                "type":"string",
-                                                                                "required":false,
-                                                                                "description" : "Codigo de la aerolinea que vendio el vuelo, ejemplo LA"
-                                                                            },
-                                                                            "messages": {
-                                                                                "type":"array",
-                                                                                "required":false,
-                                                                                "description" : "Lista de mensajes asociados a un vuelo en una reserva",
-                                                                                "items":
-                                                                                    {
-                                                                                        "type":"object",
-                                                                                        "required":false,
-                                                                                        "properties":{
-                                                                                            "text": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "texto que describe el status del vuelo en el segmento"
-                                                                                            }
-                                                                                        }
-                                                                                    }                                                                    
-                                                                            },
-                                                                            "operatingAirlineCode": {
-                                                                                "type":"string",
-                                                                                "required":false,
-                                                                                "description" : "Codigo aerolinea que opera el vuelo, ejemplo JJ"
-                                                                            },
-                                                                            "passengers": {
-                                                                                "type":"array",
-                                                                                "required":false,
-                                                                                "description" : "Lista de pasajeros de la reserva que estan en el vuelo",
-                                                                                "items":
-                                                                                    {
-                                                                                        "type":"object",
-                                                                                        "required":false,
-                                                                                        "properties":{
-                                                                                            "documents": {
-                                                                                                "type":"object",
-                                                                                                "required":false,
-                                                                                                "description" : "Lista de documentos que el pasajero tendra disponibles una vez chequeado",
-                                                                                                "properties":{
-                                                                                                    "boardingpasspdf": {
-                                                                                                        "type":"boolean",
-                                                                                                        "required":false,
-                                                                                                        "description" : "Indica si el pasajero puede descargar la tarjeta de embarque para el vuelo en formato pdf"
-                                                                                                    },
-                                                                                                    "emailboardingpass": {
-                                                                                                        "type":"boolean",
-                                                                                                        "required":false,
-                                                                                                        "description" : "Indica si el pasajero puede enviar la tarjeta de embarque para el vuelo al correo electronico"
-                                                                                                    },
-                                                                                                    "mobileboardingpass": {
-                                                                                                        "type":"boolean",
-                                                                                                        "required":false,
-                                                                                                        "description" : "Indica si el pasajero puede enviar la tarjeta de embarque para el vuelo en formato para dispositivos mobiles a su correo electrónico"
-                                                                                                    },
-                                                                                                    "precheckvoucher": {
-                                                                                                        "type":"boolean",
-                                                                                                        "required":false,
-                                                                                                        "description" : "Indica si el pasajero puede descargar el comprobante de prechequeo -entregado para rutas en las que se necesita hacer validaciones de datos en aeropuerto(por ejemplo EEUU) - para el vuelo en formato pdf"
-                                                                                                    }
-                                                                                                }
-                                                                                            },
-                                                                                            "id": {
-                                                                                                "type":"number",
-                                                                                                "required":false,
-                                                                                                "descripcion" : "Identificador del vuelo en la reserva, ejemplo 1"
-                                                                                            },
-                                                                                            "paxSegmentID" :  {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Identificador del pasajero segmento en el gds, ejemplo 3242354sddf2"            
-                                                                                            },
-                                                                                            "messages": {
-                                                                                                "type":"array",
-                                                                                                "required":false,
-                                                                                                "description" : "Lista de mensajes asociadas al pasajero en el vuelo",
-                                                                                                "items":
-                                                                                                {
-                                                                                                    "type":"object",
-                                                                                                    "required":false,
-                                                                                                    "properties":{
-                                                                                                        "text": {
-                                                                                                            "type":"string",
-                                                                                                            "required":false,
-                                                                                                            "description" : "mensajes para describir el status del pasajero en el vuelo"
-                                                                                                        }
-                                                                                                    }
-                                                                                                }
-                                                                                            },
-                                                                                            "status": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "status del pasajero en ese vuelo NOTCHECKED = se puede chequear, CHECKED = no se puede chequear, PRECHECK pasajero prechequeable, PRECHECKED pasajero prechequeado, STANDBY = En lista de espera"
-                                                                                            },
-                                                                                            "ticketNumber": {
-                                                                                                "type":"string",
-                                                                                                "required":false,
-                                                                                                "description" : "Numero de ticket ejemplo 0452322323456, 13 numeros"
-                                                                                            }
-                                                                                        }
-                                                                                    }
-                                                                                
-
-                                                                            },
-                                                                            "status": {
-                                                                                "type":"string",
-                                                                                "required":false,
-                                                                                "description" : "Indica el status del vuelo OPEN = abierto para checkin, CLOSE = cerrado para checkin, se paso la ventana operacional, NOTOPENYET = aun no abierto, aun no entra en la ventana operacional, INHIBITED vuelo inhibido para checkin por alguna regla de negocio"
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                
-
-                                                            },
-                                                            "id": {
-                                                                "type":"number",
-                                                                "required":false,
-                                                                "description" : "Identificador del segmento en la reserva, ejemplo 1"
-                                                            },
-                                                            "messages": {
-                                                                "type":"array",
-                                                                "required":false,
-                                                                "description" : "Lista de mensajes asociados al segmento de la reserva",
-                                                                "items":
-                                                                    {
-                                                                        "type":"object",
-                                                                        "required":false,
-                                                                        "properties":{
-                                                                            "text": {
-                                                                                "type":"string",
-                                                                                "required":false,
-                                                                                "description" : "mensaje para describir el status del segmento"
-                                                                            }
-                                                                        }
-                                                                    }
-                                                                
-
-                                                            },
-                                                            "status": {
-                                                                "type":"string",
-                                                                "required":false,
-                                                                "description" : "status del segmento CHEK = checkeable , NOCHEK =  no chequeable"
-                                                            }
-                                                        }
-                                                    }
-                                                
-
-                                            },
-                                            "status": {
-                                                "type":"string",
-                                                "required":false,
-                                                "description" : "status de la reserva ENABLE = se puede chequear, DISABLE =  no se puede chequear "
-                                            },
-                                            "messages": {
-                                                "type":"array",
-                                                "required":false,
-                                                "items":
-                                                {
-                                                    "type":"object",
-                                                    "required":false,
-                                                    "properties":{
-                                                        "text": {
-                                                            "type":"string",
-                                                            "required":false,
-                                                            "description" : "texto que describe el status de una reserva"
-                                                        }
-                                                    }
-                                                }                               
-                                            },
-                                            "gds": {
-                                                "type":"number",
-                                                "required":false,
-                                                "description" : "gds a la que pertenece la reserva 1 sabre, 2 amadeus"
-                                            }
-                                        }
-                                    }
-                                
-
-                            }
-                        }
-                    },
-                    "status": {
-                        "type":"object",
-                        "required":false,
-                        "properties":{
-                            "code": {
-                                "type":"number",
-                                "required":false
-                            }
-                        }
-                    }
-                }
-            }
-
-
-+ Response 500 (application/json)
-
-        { "title": "Fatal Error" }
-
-+ Response 501 (application/json)
-
-        { "title": "No paso la validacion del apellido o record locator, intente de nuevo" } 
-
-+ Response 502 (application/json)  
-
-        { "title": "Error llamando al servicio, trate en un rato" }         
-
-+ Response 503 (application/json)
-
-        { "title": "No disponible el checkin" }
-
-+ Response 510 (application/json)
-
-        { "title": "Reserva inhibida para checkin" }
-
-+ Response 520 (application/json)
-
-        { "title": "Request invalido" }
-
-+ Response 521 (application/json)
-
-        { "title": "Redirigiendo a sitio tam", "url" : "tam.com.br/supercheckindetam" }
-
-+ Response 530 (application/json)
-
-        { "title": "Reserva de grupo, pedir ingreso foid o eticket" }
-
-
-
-## Add FQTVs [/ws/api/common/1.0/rest/add_fqtvs]
-### Add FQTVs  [POST]
+##  FQTVs [/ws/api/common/1.0/rest/add_fqtvs]
+###  FQTVs  [POST]
 
 + Request (application/json)
        
